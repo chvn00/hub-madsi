@@ -134,7 +134,7 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 2.5rem;
+      padding: 1.75rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
@@ -180,10 +180,11 @@
 
     /* Icon */
     .card-icon {
-      width: 64px; height: 64px;
+      width: 56px; height: 56px;
       border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 2rem;
+      font-size: 1.8rem;
+      margin: 0 auto;
     }
 
     .icon-blue   { background: rgba(37,84,204,0.2); }
@@ -192,14 +193,14 @@
     .icon-purple { background: rgba(168,85,247,0.15); }
 
     /* Card body */
-    .card-body { flex: 1; }
+    .card-body { flex: 1; text-align: center; }
 
     .card-body h3 {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--text);
       margin-bottom: 0.5rem;
-      padding-right: 4rem;
+      padding-right: 0;
     }
 
     .card-body p {
@@ -417,11 +418,6 @@
       <div class="card-body">
         <h3>Seguimiento a Estudiantes</h3>
       </div>
-      <div class="tags">
-        <span class="tag">Estudiantes</span>
-        <span class="tag">Seguimiento</span>
-        <span class="tag">Alertas</span>
-      </div>
       <div class="card-actions">
         <a href="#" class="btn btn-primary">Abrir →</a>
       </div>
@@ -433,11 +429,6 @@
       <div class="card-icon icon-yellow">📋</div>
       <div class="card-body">
         <h3>Comité de Proyectos</h3>
-      </div>
-      <div class="tags">
-        <span class="tag">Proyectos</span>
-        <span class="tag">Comité</span>
-        <span class="tag">Evaluación</span>
       </div>
       <div class="card-actions">
         <button class="btn btn-ghost" disabled>En desarrollo ⏳</button>
@@ -466,11 +457,6 @@
       <div class="card-icon icon-purple">🧩</div>
       <div class="card-body">
         <h3>Módulos</h3>
-      </div>
-      <div class="tags">
-        <span class="tag">Académico</span>
-        <span class="tag">Módulos</span>
-        <span class="tag">Contenidos</span>
       </div>
       <div class="card-actions">
         <button class="btn btn-ghost" disabled>En desarrollo ⏳</button>
