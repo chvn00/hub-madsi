@@ -10,5 +10,9 @@ def index():
 def logo():
     return send_from_directory(".", "escudo.png")
 
+@app.route("/apple-touch-icon.png")
+def touch_icon():
+    return send_from_directory(".", "apple-touch-icon.png")
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
