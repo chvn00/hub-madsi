@@ -164,14 +164,17 @@
 
     /* Badge */
     .badge {
-      position: absolute;
-      top: 1rem; right: 1rem;
+      position: static;
+      display: block;
+      text-align: center;
       font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      padding: 3px 8px;
+      padding: 4px 12px;
       border-radius: 20px;
+      margin: 0 auto 0.25rem;
+      width: fit-content;
     }
 
     .badge-active   { background: rgba(34,197,94,0.15);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
@@ -233,8 +236,8 @@
       align-items: center;
       justify-content: center;
       gap: 0.4rem;
-      padding: 0.55rem 1.2rem;
-      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
@@ -390,7 +393,7 @@
   <img src="/escudo.png" alt="USTA" />
   <div class="header-text">
     <h1>Facultad de Ingeniería Mecatrónica</h1>
-    <p>Universidad Santo Tomás · Portal de Herramientas Académicas</p>
+    <p>Maestría en Análisis de Datos y Sistemas Inteligentes</p>
   </div>
 </header>
 
@@ -468,7 +471,7 @@
 
 <!-- FOOTER -->
 <footer>
-  Maestría en Análisis de Datos y Sistemas Inteligentes · <span>USTA</span> · 2026
+  Universidad Santo Tomás · <span>USTA</span> · 2026
 </footer>
 
 <script>
