@@ -216,6 +216,8 @@
       line-height: 1.6;
     }
 
+    .card-desc { display: block; margin-top: 0.4rem; }
+
     /* Tags */
     .tags {
       display: flex;
@@ -333,6 +335,7 @@
 
     /* ── RESPONSIVE: iPad (768px - 1024px) ── */
     @media (max-width: 1024px) {
+      .card-desc { display: none; }
       header {
         height: auto;
         padding: 1rem 1.5rem;
@@ -433,6 +436,7 @@
       <div class="card-icon icon-blue">👨‍🎓</div>
       <div class="card-body">
         <h3>Seguimiento a Estudiantes</h3>
+        <p class="card-desc">Registro y seguimiento del desempeño académico, alertas tempranas y gestión de casos por docente.</p>
       </div>
       <div class="card-actions">
         <a href="#" class="btn btn-primary">Abrir</a>
@@ -445,6 +449,7 @@
       <div class="card-icon icon-yellow">📋</div>
       <div class="card-body">
         <h3>Comité de Proyectos</h3>
+        <p class="card-desc">Gestión de propuestas, evaluación de anteproyectos, asignación de directores y seguimiento de avances.</p>
       </div>
       <div class="card-actions">
         <button class="btn btn-ghost" disabled>En desarrollo</button>
@@ -457,6 +462,7 @@
       <div class="card-icon icon-green">🏛️</div>
       <div class="card-body">
         <h3>Administrativa</h3>
+        <p class="card-desc">Gestión centralizada de procesos administrativos del programa, nómina docente y control presupuestal.</p>
       </div>
       <div class="card-actions">
         <div class="card-actions">
@@ -473,6 +479,7 @@
       <div class="card-icon icon-purple">🧩</div>
       <div class="card-body">
         <h3>Módulos</h3>
+        <p class="card-desc">Módulos integrados del programa académico: contenidos, evaluaciones y recursos por asignatura.</p>
       </div>
       <div class="card-actions">
         <a href="https://madsi-cohortes.up.railway.app/" target="_blank" class="btn btn-modulos">Abrir</a>
