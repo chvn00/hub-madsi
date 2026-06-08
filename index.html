@@ -124,9 +124,8 @@
     /* ── GRID ── */
     .grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 260px));
+      grid-template-columns: repeat(4, 1fr);
       gap: 1.5rem;
-      justify-content: center;
     }
 
     /* ── CARD ── */
@@ -134,7 +133,7 @@
       background: #ffffff;
       border: 1.5px solid #E2E8F0;
       border-radius: 14px;
-      padding: 28px 13px 22px;
+      padding: 28px 24px 22px;
       display: flex;
       flex-direction: column;
       gap: 0.85rem;
@@ -183,7 +182,7 @@
       border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.6rem;
-      margin: 0 auto 16px;
+      margin: 0 0 16px 0;
       flex-shrink: 0;
     }
 
@@ -195,7 +194,7 @@
     .card-icon i { font-size: 1.6rem; }
 
     /* Card body */
-    .card-body { flex: 1; text-align: center; }
+    .card-body { flex: 1; text-align: left; }
 
     .card-body h3 {
       font-size: 1rem;
@@ -213,7 +212,7 @@
     .card-desc { display: block; margin-top: 0.35rem; }
 
     /* Tags */
-    .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: flex-start; }
 
     .tag {
       font-size: 0.73rem;
