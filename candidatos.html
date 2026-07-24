@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apertura de Cohortes · MADSI</title>
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg:        #F8F7F4;
+  --surface:   #FFFFFF;
+  --border:    #E4E2DC;
+  --text:      #1A1A1A;
+  --muted:     #6B6860;
+  --yellow:    #F5C300;
+  --yellow-bg: #FFFAE6;
+  --blue:      #1D3FAA;
+  --blue-light:#2550D4;
+
+  --s-inscrito:   #2550D4; --s-inscrito-bg:   #EEF2FF;
+  --s-entrevista: #D97706; --s-entrevista-bg: #FEF3C7;
+  --s-admitido:   #059669; --s-admitido-bg:   #D1FAE5;
+  --s-matriculado:#7C3AED; --s-matriculado-bg:#EDE9FE;
+  --s-desistio:   #DC2626; --s-desistio-bg:   #FEE2E2;
+
+  --radius: 10px;
+  --shadow: 0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #111110;
+    --surface:   #1C1C1A;
+    --border:    #2E2D2A;
+    --text:      #F0EEE8;
+    --muted:     #8A8880;
+    --yellow-bg: #2A2500;
+    --blue:      #5B7FDE;
+    --blue-light:#7A9AEB;
+
+    --s-inscrito:   #7A9AEB; --s-inscrito-bg:   #1A2240;
+    --s-entrevista: #F59E0B; --s-entrevista-bg: #2A1F00;
+    --s-admitido:   #34D399; --s-admitido-bg:   #003D28;
+    --s-matriculado:#A78BFA; --s-matriculado-bg:#1E1040;
+    --s-desistio:   #F87171; --s-desistio-bg:   #3A0A0A;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:#111110; --surface:#1C1C1A; --border:#2E2D2A; --text:#F0EEE8; --muted:#8A8880;
+  --yellow-bg:#2A2500; --blue:#5B7FDE; --blue-light:#7A9AEB;
+  --s-inscrito:#7A9AEB; --s-inscrito-bg:#1A2240;
+  --s-entrevista:#F59E0B; --s-entrevista-bg:#2A1F00;
+  --s-admitido:#34D399; --s-admitido-bg:#003D28;
+  --s-matriculado:#A78BFA; --s-matriculado-bg:#1E1040;
+  --s-desistio:#F87171; --s-desistio-bg:#3A0A0A;
+}
+:root[data-theme="light"] {
+  --bg:#F8F7F4; --surface:#FFFFFF; --border:#E4E2DC; --text:#1A1A1A; --muted:#6B6860;
+  --yellow-bg:#FFFAE6; --blue:#1D3FAA; --blue-light:#2550D4;
+  --s-inscrito:#2550D4; --s-inscrito-bg:#EEF2FF;
+  --s-entrevista:#D97706; --s-entrevista-bg:#FEF3C7;
+  --s-admitido:#059669; --s-admitido-bg:#D1FAE5;
+  --s-matriculado:#7C3AED; --s-matriculado-bg:#EDE9FE;
+  --s-desistio:#DC2626; --s-desistio-bg:#FEE2E2;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── HEADER ── */
+header {
+  background: linear-gradient(135deg, #1e1e1e 0%, #2c2c2c 100%);
+  border-bottom: 3px solid var(--yellow);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  gap: 1rem;
+}
+
+.header-left { display: flex; align-items: center; gap: 1rem; }
+
+.logo-wrap {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: #fff; overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.header-title { color: #fff; }
+.header-title h1 { font-size: 1rem; font-weight: 700; letter-spacing: -.01em; }
+.header-title p  { font-size: .72rem; color: #aaa; margin-top: 1px; }
+
+.header-right { display: flex; align-items: center; gap: .75rem; }
+
+.btn-back {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .45rem .9rem; border-radius: 7px; font-size: .78rem; font-weight: 600;
+  background: rgba(255,255,255,.08); color: #fff; text-decoration: none;
+  border: 1px solid rgba(255,255,255,.15); transition: background .15s;
+}
+.btn-back:hover { background: rgba(255,255,255,.14); }
+
+/* ── MAIN LAYOUT ── */
+main { max-width: 1180px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+
+/* ── KPI BAR ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  box-shadow: var(--shadow);
+}
+
+.kpi-label { font-size: .7rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--muted); margin-bottom: .35rem; }
+.kpi-value { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.kpi-sub   { font-size: .7rem; color: var(--muted); margin-top: .3rem; }
+
+.kpi.kpi-total   .kpi-value { color: var(--text); }
+.kpi.kpi-inscrito   .kpi-value { color: var(--s-inscrito); }
+.kpi.kpi-entrevista .kpi-value { color: var(--s-entrevista); }
+.kpi.kpi-admitido   .kpi-value { color: var(--s-admitido); }
+.kpi.kpi-matriculado .kpi-value { color: var(--s-matriculado); }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display: flex; gap: .75rem; align-items: center;
+  margin-bottom: 1.25rem; flex-wrap: wrap;
+}
+
+.search-wrap {
+  flex: 1; min-width: 200px; position: relative;
+}
+.search-wrap input {
+  width: 100%; padding: .55rem .9rem .55rem 2.2rem;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--text);
+  font-size: .84rem; outline: none; transition: border .15s;
+}
+.search-wrap input:focus { border-color: var(--blue-light); }
+.search-wrap .icon {
+  position: absolute; left: .7rem; top: 50%; transform: translateY(-50%);
+  font-size: .9rem; pointer-events: none;
+}
+
+select.filter {
+  padding: .55rem .8rem; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--surface); color: var(--text);
+  font-size: .84rem; outline: none; cursor: pointer;
+}
+
+.btn-add {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .55rem 1.1rem; border-radius: 8px; font-size: .84rem; font-weight: 600;
+  background: var(--yellow); color: #111; border: none; cursor: pointer;
+  transition: filter .15s; white-space: nowrap;
+}
+.btn-add:hover { filter: brightness(.92); }
+
+.btn-export {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .55rem 1rem; border-radius: 8px; font-size: .84rem; font-weight: 600;
+  background: var(--surface); color: var(--muted);
+  border: 1px solid var(--border); cursor: pointer; transition: all .15s;
+}
+.btn-export:hover { color: var(--text); border-color: #888; }
+
+/* ── TABLE ── */
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%; border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+thead th {
+  padding: .75rem 1rem; text-align: left;
+  font-size: .7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); border-bottom: 1px solid var(--border);
+  white-space: nowrap; user-select: none; cursor: pointer;
+}
+thead th:hover { color: var(--text); }
+
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--bg); }
+
+tbody td { padding: .75rem 1rem; vertical-align: middle; }
+
+.td-name { font-weight: 600; }
+.td-doc  { font-size: .8rem; color: var(--muted); }
+.td-contact { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+.td-date { font-size: .8rem; color: var(--muted); }
+.td-notes { font-size: .8rem; color: var(--muted); max-width: 180px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .2rem .65rem; border-radius: 20px; font-size: .72rem; font-weight: 600;
+  white-space: nowrap;
+}
+.pill-inscrito    { background: var(--s-inscrito-bg);    color: var(--s-inscrito); }
+.pill-entrevistado{ background: var(--s-entrevista-bg); color: var(--s-entrevista); }
+.pill-admitido    { background: var(--s-admitido-bg);   color: var(--s-admitido); }
+.pill-matriculado { background: var(--s-matriculado-bg);color: var(--s-matriculado); }
+.pill-desistio    { background: var(--s-desistio-bg);   color: var(--s-desistio); }
+
+.td-actions { display: flex; gap: .4rem; }
+.btn-icon {
+  width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border);
+  background: transparent; cursor: pointer; font-size: .85rem;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: all .15s;
+}
+.btn-icon:hover { background: var(--bg); color: var(--text); border-color: #888; }
+.btn-icon.del:hover { background: var(--s-desistio-bg); color: var(--s-desistio); border-color: var(--s-desistio); }
+
+.empty-state {
+  padding: 3rem; text-align: center; color: var(--muted);
+}
+.empty-state p { margin-top: .5rem; font-size: .84rem; }
+
+/* ── MODAL ── */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--surface); border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.22);
+  width: min(560px, 95vw); max-height: 90vh;
+  overflow-y: auto; padding: 2rem;
+  transform: translateY(12px); transition: transform .2s;
+}
+.overlay.open .modal { transform: translateY(0); }
+
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1.5rem;
+}
+.modal-header h2 { font-size: 1.05rem; font-weight: 700; }
+.modal-close {
+  width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border);
+  background: transparent; cursor: pointer; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center; color: var(--muted);
+}
+.modal-close:hover { background: var(--bg); }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group { display: flex; flex-direction: column; gap: .4rem; }
+.form-group.full { grid-column: 1/-1; }
+
+label { font-size: .76rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .05em; }
+
+input[type=text], input[type=email], input[type=tel], input[type=date],
+select.form-select, textarea {
+  padding: .6rem .85rem; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--bg); color: var(--text);
+  font-size: .88rem; outline: none; transition: border .15s;
+  font-family: inherit;
+}
+input:focus, select.form-select:focus, textarea:focus {
+  border-color: var(--blue-light);
+}
+textarea { resize: vertical; min-height: 72px; }
+
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: .75rem;
+  margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
+}
+.btn-cancel {
+  padding: .6rem 1.2rem; border-radius: 8px; font-size: .84rem; font-weight: 600;
+  background: transparent; color: var(--muted); border: 1px solid var(--border);
+  cursor: pointer; transition: all .15s;
+}
+.btn-cancel:hover { color: var(--text); }
+.btn-save {
+  padding: .6rem 1.4rem; border-radius: 8px; font-size: .84rem; font-weight: 700;
+  background: var(--yellow); color: #111; border: none; cursor: pointer;
+  transition: filter .15s;
+}
+.btn-save:hover { filter: brightness(.92); }
+
+/* ── COHORT SECTION HEADER ── */
+.cohort-header {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .6rem 1rem; background: var(--bg);
+  border-bottom: 1px solid var(--border); font-size: .78rem;
+  font-weight: 700; color: var(--muted); text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.cohort-count {
+  background: var(--border); color: var(--muted);
+  border-radius: 20px; padding: .1rem .55rem;
+  font-size: .7rem; font-weight: 700;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  header { padding: 0 1rem; }
+  main { padding: 1.2rem 1rem 2rem; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .form-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="logo-wrap">
+      <img src="/escudo.png" alt="USTA" onerror="this.parentElement.textContent='🎓'">
+    </div>
+    <div class="header-title">
+      <h1>Apertura de Cohortes</h1>
+      <p>Maestría en Análisis de Datos y Sistemas Inteligentes · USTA</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <a href="/" class="btn-back">← Hub MADSI</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi kpi-total">
+      <div class="kpi-label">Total Candidatos</div>
+      <div class="kpi-value" id="kpi-total">0</div>
+      <div class="kpi-sub">en todas las cohortes</div>
+    </div>
+    <div class="kpi kpi-inscrito">
+      <div class="kpi-label">Inscritos</div>
+      <div class="kpi-value" id="kpi-inscrito">0</div>
+      <div class="kpi-sub">pendientes de entrevista</div>
+    </div>
+    <div class="kpi kpi-entrevista">
+      <div class="kpi-label">Entrevistados</div>
+      <div class="kpi-value" id="kpi-entrevista">0</div>
+      <div class="kpi-sub">en evaluación</div>
+    </div>
+    <div class="kpi kpi-admitido">
+      <div class="kpi-label">Admitidos</div>
+      <div class="kpi-value" id="kpi-admitido">0</div>
+      <div class="kpi-sub">pendientes matrícula</div>
+    </div>
+    <div class="kpi kpi-matriculado">
+      <div class="kpi-label">Matriculados</div>
+      <div class="kpi-value" id="kpi-matriculado">0</div>
+      <div class="kpi-sub">activos en programa</div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="icon">🔍</span>
+      <input type="text" id="search" placeholder="Buscar por nombre, documento o correo…" oninput="render()">
+    </div>
+    <select class="filter" id="filter-cohort" onchange="render()">
+      <option value="">Todas las cohortes</option>
+    </select>
+    <select class="filter" id="filter-status" onchange="render()">
+      <option value="">Todos los estados</option>
+      <option value="Inscrito">Inscrito</option>
+      <option value="Entrevistado">Entrevistado</option>
+      <option value="Admitido">Admitido</option>
+      <option value="Matriculado">Matriculado</option>
+      <option value="Desistió">Desistió</option>
+    </select>
+    <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
+    <button class="btn-add" onclick="openModal()">+ Agregar Candidato</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy('nombre')">Candidato ↕</th>
+          <th onclick="sortBy('documento')">Documento</th>
+          <th>Contacto</th>
+          <th onclick="sortBy('cohorte')">Cohorte ↕</th>
+          <th onclick="sortBy('estado')">Estado ↕</th>
+          <th onclick="sortBy('fechaInscripcion')">Inscripción ↕</th>
+          <th>Notas</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="e=>{ if(e.target===this) closeModal(); }">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="modal-title">Agregar Candidato</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Nombre completo *</label>
+        <input type="text" id="f-nombre" placeholder="Ej: María Rodríguez Pérez">
+      </div>
+      <div class="form-group">
+        <label>Documento de identidad</label>
+        <input type="text" id="f-documento" placeholder="Ej: 1093847562">
+      </div>
+      <div class="form-group">
+        <label>Cohorte *</label>
+        <select class="form-select" id="f-cohorte">
+          <option value="">Seleccionar…</option>
+          <option>Cohorte 1 — 2023-I</option>
+          <option>Cohorte 2 — 2023-II</option>
+          <option>Cohorte 3 — 2024-I</option>
+          <option>Cohorte 4 — 2024-II</option>
+          <option>Cohorte 5 — 2025-I</option>
+          <option>Cohorte 6 — 2025-II</option>
+          <option>Cohorte 7 — 2026-I</option>
+          <option>Cohorte 8 — 2026-II</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="tel" id="f-telefono" placeholder="Ej: 3174282817">
+      </div>
+      <div class="form-group full">
+        <label>Correo electrónico</label>
+        <input type="email" id="f-email" placeholder="correo@ejemplo.com">
+      </div>
+      <div class="form-group">
+        <label>Estado</label>
+        <select class="form-select" id="f-estado">
+          <option value="Inscrito">Inscrito</option>
+          <option value="Entrevistado">Entrevistado</option>
+          <option value="Admitido">Admitido</option>
+          <option value="Matriculado">Matriculado</option>
+          <option value="Desistió">Desistió</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Fecha de inscripción</label>
+        <input type="date" id="f-fecha">
+      </div>
+      <div class="form-group full">
+        <label>Notas</label>
+        <textarea id="f-notas" placeholder="Observaciones, condiciones especiales, etc."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveCandidato()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY = 'madsi_candidatos_v1';
+let db = JSON.parse(localStorage.getItem(KEY) || '[]');
+let editId = null;
+let sortCol = 'fechaInscripcion';
+let sortAsc = false;
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
+
+const COHORTS = [
+  'Cohorte 1 — 2023-I','Cohorte 2 — 2023-II','Cohorte 3 — 2024-I',
+  'Cohorte 4 — 2024-II','Cohorte 5 — 2025-I','Cohorte 6 — 2025-II',
+  'Cohorte 7 — 2026-I','Cohorte 8 — 2026-II'
+];
+
+const STATUS_PILL = {
+  'Inscrito':     'pill-inscrito',
+  'Entrevistado': 'pill-entrevistado',
+  'Admitido':     'pill-admitido',
+  'Matriculado':  'pill-matriculado',
+  'Desistió':     'pill-desistio',
+};
+
+const STATUS_DOT = {
+  'Inscrito':'🔵','Entrevistado':'🟡','Admitido':'🟢','Matriculado':'🟣','Desistió':'🔴'
+};
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function filtered() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const fc = document.getElementById('filter-cohort').value;
+  const fs = document.getElementById('filter-status').value;
+  return db.filter(c => {
+    const match = !q || [c.nombre,c.documento,c.email].join(' ').toLowerCase().includes(q);
+    const cohort = !fc || c.cohorte === fc;
+    const status = !fs || c.estado === fs;
+    return match && cohort && status;
+  }).sort((a,b) => {
+    const va = (a[sortCol]||'').toString().toLowerCase();
+    const vb = (b[sortCol]||'').toString().toLowerCase();
+    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = true; }
+  render();
+}
+
+function updateKPIs() {
+  const counts = { Inscrito:0, Entrevistado:0, Admitido:0, Matriculado:0 };
+  db.forEach(c => { if (counts[c.estado] !== undefined) counts[c.estado]++; });
+  document.getElementById('kpi-total').textContent = db.length;
+  document.getElementById('kpi-inscrito').textContent = counts.Inscrito;
+  document.getElementById('kpi-entrevista').textContent = counts.Entrevistado;
+  document.getElementById('kpi-admitido').textContent = counts.Admitido;
+  document.getElementById('kpi-matriculado').textContent = counts.Matriculado;
+}
+
+function updateCohortFilter() {
+  const sel = document.getElementById('filter-cohort');
+  const cur = sel.value;
+  const used = [...new Set(db.map(c=>c.cohorte).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Todas las cohortes</option>' +
+    used.map(c=>`<option${c===cur?' selected':''}>${c}</option>`).join('');
+}
+
+function render() {
+  updateKPIs();
+  updateCohortFilter();
+  const rows = filtered();
+  const tbody = document.getElementById('tbody');
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="8">
+      <div class="empty-state">📭<p>No hay candidatos que coincidan con los filtros.</p></div>
+    </td></tr>`;
+    return;
+  }
+
+  // Group by cohort
+  const groups = {};
+  rows.forEach(c => { (groups[c.cohorte||'Sin cohorte'] ??= []).push(c); });
+
+  tbody.innerHTML = Object.entries(groups)
+    .sort(([a],[b])=>a.localeCompare(b))
+    .map(([cohort, items]) => `
+      <tr>
+        <td colspan="8" style="padding:0">
+          <div class="cohort-header">
+            📅 ${cohort} <span class="cohort-count">${items.length}</span>
+          </div>
+        </td>
+      </tr>
+      ${items.map(c => `
+      <tr>
+        <td>
+          <div class="td-name">${esc(c.nombre)}</div>
+          <div class="td-doc">${esc(c.documento||'')}</div>
+        </td>
+        <td class="td-doc">${esc(c.documento||'—')}</td>
+        <td class="td-contact">${esc(c.email||'—')}<br>${esc(c.telefono||'')}</td>
+        <td><span style="font-size:.8rem">${esc(c.cohorte||'—')}</span></td>
+        <td><span class="pill ${STATUS_PILL[c.estado]||''}">${STATUS_DOT[c.estado]||''} ${esc(c.estado)}</span></td>
+        <td class="td-date">${fmtDate(c.fechaInscripcion)}</td>
+        <td class="td-notes" title="${esc(c.notas||'')}">${esc(c.notas||'—')}</td>
+        <td>
+          <div class="td-actions">
+            <button class="btn-icon" onclick="editCandidato('${c.id}')" title="Editar">✏️</button>
+            <button class="btn-icon del" onclick="deleteCandidato('${c.id}')" title="Eliminar">🗑</button>
+          </div>
+        </td>
+      </tr>`).join('')}
+    `).join('');
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function openModal(id=null) {
+  editId = id;
+  const c = id ? db.find(x=>x.id===id) : null;
+  document.getElementById('modal-title').textContent = id ? 'Editar Candidato' : 'Agregar Candidato';
+  document.getElementById('f-nombre').value    = c?.nombre    || '';
+  document.getElementById('f-documento').value = c?.documento || '';
+  document.getElementById('f-cohorte').value   = c?.cohorte   || '';
+  document.getElementById('f-telefono').value  = c?.telefono  || '';
+  document.getElementById('f-email').value     = c?.email     || '';
+  document.getElementById('f-estado').value    = c?.estado    || 'Inscrito';
+  document.getElementById('f-fecha').value     = c?.fechaInscripcion || new Date().toISOString().split('T')[0];
+  document.getElementById('f-notas').value     = c?.notas     || '';
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('f-nombre').focus();
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('open'); editId=null; }
+
+function saveCandidato() {
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const cohorte= document.getElementById('f-cohorte').value;
+  if (!nombre) { alert('El nombre es obligatorio.'); return; }
+  if (!cohorte){ alert('Selecciona una cohorte.'); return; }
+  const data = {
+    nombre, cohorte,
+    documento: document.getElementById('f-documento').value.trim(),
+    telefono:  document.getElementById('f-telefono').value.trim(),
+    email:     document.getElementById('f-email').value.trim(),
+    estado:    document.getElementById('f-estado').value,
+    fechaInscripcion: document.getElementById('f-fecha').value,
+    notas:     document.getElementById('f-notas').value.trim(),
+  };
+  if (editId) {
+    const idx = db.findIndex(x=>x.id===editId);
+    db[idx] = { ...db[idx], ...data };
+  } else {
+    db.push({ id: uid(), ...data });
+  }
+  save(); closeModal(); render();
+}
+
+function editCandidato(id)   { openModal(id); }
+
+function deleteCandidato(id) {
+  const c = db.find(x=>x.id===id);
+  if (!confirm(`¿Eliminar a ${c?.nombre}?`)) return;
+  db = db.filter(x=>x.id!==id);
+  save(); render();
+}
+
+function exportCSV() {
+  const rows = filtered();
+  const headers = ['Nombre','Documento','Correo','Teléfono','Cohorte','Estado','Fecha Inscripción','Notas'];
+  const lines = [headers.join(','), ...rows.map(c=>[
+    c.nombre,c.documento,c.email,c.telefono,c.cohorte,c.estado,c.fechaInscripcion,c.notas
+  ].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','))];
+  const blob = new Blob(['﻿'+lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'candidatos_madsi.csv'; a.click();
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+document.getElementById('overlay').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+render();
+</script>
+</body>
+</html>

@@ -14,5 +14,9 @@ def logo():
 def touch_icon():
     return send_from_directory(".", "apple-touch-icon.png")
 
+@app.route("/candidatos")
+def candidatos():
+    return send_from_directory(".", "candidatos.html")
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
