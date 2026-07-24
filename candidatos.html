@@ -408,6 +408,10 @@ textarea { resize: vertical; min-height: 68px; }
         <label>Fecha de entrevista</label>
         <input type="date" id="f-fecha-ent">
       </div>
+      <div class="fg full">
+        <label>Correo electrónico</label>
+        <input type="email" id="f-email" placeholder="correo@ejemplo.com">
+      </div>
     </div>
     <div class="modal-ft">
       <button class="btn-cancel" onclick="closeCandModal()">Cancelar</button>
@@ -601,6 +605,7 @@ function openCandModal(cohortId,candId=null){
   document.getElementById('f-estado').value      = x?.estado||'Inscrito';
   document.getElementById('f-fecha-ins').value   = x?.fechaInscripcion||new Date().toISOString().split('T')[0];
   document.getElementById('f-fecha-ent').value   = x?.fechaEntrevista||'';
+  document.getElementById('f-email').value       = x?.email||'';
   document.getElementById('ov-cand').classList.add('open');
   setTimeout(()=>document.getElementById('f-nombre').focus(),80);
 }
@@ -619,6 +624,7 @@ function saveCand(){
     estado:          document.getElementById('f-estado').value,
     fechaInscripcion:document.getElementById('f-fecha-ins').value,
     fechaEntrevista: document.getElementById('f-fecha-ent').value,
+    email:           document.getElementById('f-email').value.trim(),
   };
   if(editCandId){
     const idx=c.candidates.findIndex(y=>y.id===editCandId);
@@ -640,9 +646,9 @@ function deleteCand(cohortId,candId){
 function exportCSV(cohortId){
   const c=db.cohorts.find(x=>x.id===cohortId);
   if(!c)return;
-  const h=['Identificación','Nombre','N° Formulario','N° Inscripción','Estado','Fecha Inscripción','Fecha Entrevista'];
+  const h=['Identificación','Nombre','N° Formulario','N° Inscripción','Estado','Fecha Inscripción','Fecha Entrevista','Correo'];
   const lines=[h.join(','),...c.candidates.map(x=>[
-    x.documento,x.nombre,x.formulario,x.numInscripcion,x.estado,x.fechaInscripcion,x.fechaEntrevista
+    x.documento,x.nombre,x.formulario,x.numInscripcion,x.estado,x.fechaInscripcion,x.fechaEntrevista,x.email
   ].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','))];
   const blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
