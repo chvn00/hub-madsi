@@ -374,21 +374,21 @@ textarea { resize: vertical; min-height: 68px; }
       <button class="btn-close" onclick="closeCandModal()">✕</button>
     </div>
     <div class="form-grid">
+      <div class="fg">
+        <label>Identificación *</label>
+        <input type="text" id="f-doc" placeholder="1093847562">
+      </div>
+      <div class="fg">
+        <label>Número de formulario</label>
+        <input type="text" id="f-formulario" placeholder="Ej: F-2026-0042">
+      </div>
       <div class="fg full">
         <label>Nombre completo *</label>
         <input type="text" id="f-nombre" placeholder="Ej: María Rodríguez Pérez">
       </div>
       <div class="fg">
-        <label>Documento</label>
-        <input type="text" id="f-doc" placeholder="1093847562">
-      </div>
-      <div class="fg">
-        <label>Teléfono</label>
-        <input type="tel" id="f-tel" placeholder="3174282817">
-      </div>
-      <div class="fg full">
-        <label>Correo electrónico</label>
-        <input type="email" id="f-email" placeholder="correo@ejemplo.com">
+        <label>Número de inscripción</label>
+        <input type="text" id="f-inscripcion" placeholder="Ej: INS-2026-001">
       </div>
       <div class="fg">
         <label>Estado</label>
@@ -401,12 +401,12 @@ textarea { resize: vertical; min-height: 68px; }
         </select>
       </div>
       <div class="fg">
-        <label>Fecha inscripción</label>
-        <input type="date" id="f-fecha">
+        <label>Fecha de inscripción</label>
+        <input type="date" id="f-fecha-ins">
       </div>
-      <div class="fg full">
-        <label>Notas</label>
-        <textarea id="f-notas" placeholder="Observaciones…"></textarea>
+      <div class="fg">
+        <label>Fecha de entrevista</label>
+        <input type="date" id="f-fecha-ent">
       </div>
     </div>
     <div class="modal-ft">
@@ -481,11 +481,11 @@ function renderCandidates(c) {
   const rows = c.candidates.map(x=>`
     <tr>
       <td><div class="td-name">${esc(x.nombre)}</div><div class="td-doc">${esc(x.documento||'')}</div></td>
-      <td class="td-small">${esc(x.email||'—')}</td>
-      <td class="td-small">${esc(x.telefono||'—')}</td>
+      <td class="td-small">${esc(x.formulario||'—')}</td>
+      <td class="td-small">${esc(x.numInscripcion||'—')}</td>
       <td><span class="pill ${PILL[x.estado]||''}">${DOT[x.estado]||''} ${esc(x.estado)}</span></td>
       <td class="td-gray">${fmt(x.fechaInscripcion)}</td>
-      <td class="td-notes" title="${esc(x.notas)}">${esc(x.notas||'—')}</td>
+      <td class="td-gray">${fmt(x.fechaEntrevista)}</td>
       <td><div class="td-acts">
         <button class="btn-icon" onclick="openCandModal('${c.id}','${x.id}')">✏️</button>
         <button class="btn-icon del" onclick="deleteCand('${c.id}','${x.id}')">🗑</button>
@@ -511,8 +511,8 @@ function renderCandidates(c) {
     <div style="overflow-x:auto">
     <table id="tbl-${c.id}">
       <thead><tr>
-        <th>Candidato</th><th>Correo</th><th>Teléfono</th>
-        <th>Estado</th><th>Inscripción</th><th>Notas</th><th></th>
+        <th>Nombre / Identificación</th><th>N° Formulario</th><th>N° Inscripción</th>
+        <th>Estado</th><th>F. Inscripción</th><th>F. Entrevista</th><th></th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
@@ -525,17 +525,17 @@ function filterTable(cId, q, status) {
   const sq=(q||'').toLowerCase();
   const ss=status!==undefined?status:(document.getElementById('sel-'+cId)?.value||'');
   const rows=c.candidates.filter(x=>{
-    const mq=!sq||[x.nombre,x.documento,x.email].join(' ').toLowerCase().includes(sq);
+    const mq=!sq||[x.nombre,x.documento,x.formulario,x.numInscripcion].join(' ').toLowerCase().includes(sq);
     return mq&&(!ss||x.estado===ss);
   });
   tbody.innerHTML=rows.map(x=>`
     <tr>
       <td><div class="td-name">${esc(x.nombre)}</div><div class="td-doc">${esc(x.documento||'')}</div></td>
-      <td class="td-small">${esc(x.email||'—')}</td>
-      <td class="td-small">${esc(x.telefono||'—')}</td>
+      <td class="td-small">${esc(x.formulario||'—')}</td>
+      <td class="td-small">${esc(x.numInscripcion||'—')}</td>
       <td><span class="pill ${PILL[x.estado]||''}">${DOT[x.estado]||''} ${esc(x.estado)}</span></td>
       <td class="td-gray">${fmt(x.fechaInscripcion)}</td>
-      <td class="td-notes" title="${esc(x.notas)}">${esc(x.notas||'—')}</td>
+      <td class="td-gray">${fmt(x.fechaEntrevista)}</td>
       <td><div class="td-acts">
         <button class="btn-icon" onclick="openCandModal('${cId}','${x.id}')">✏️</button>
         <button class="btn-icon del" onclick="deleteCand('${cId}','${x.id}')">🗑</button>
@@ -594,13 +594,13 @@ function openCandModal(cohortId,candId=null){
   const c=db.cohorts.find(x=>x.id===cohortId);
   const x=candId?c?.candidates.find(y=>y.id===candId):null;
   document.getElementById('cand-modal-title').textContent=candId?'Editar Candidato':'Agregar Candidato — '+( c?.nombre||'');
-  document.getElementById('f-nombre').value  = x?.nombre  ||'';
-  document.getElementById('f-doc').value     = x?.documento||'';
-  document.getElementById('f-tel').value     = x?.telefono ||'';
-  document.getElementById('f-email').value   = x?.email   ||'';
-  document.getElementById('f-estado').value  = x?.estado  ||'Inscrito';
-  document.getElementById('f-fecha').value   = x?.fechaInscripcion||new Date().toISOString().split('T')[0];
-  document.getElementById('f-notas').value   = x?.notas   ||'';
+  document.getElementById('f-doc').value        = x?.documento||'';
+  document.getElementById('f-formulario').value  = x?.formulario||'';
+  document.getElementById('f-nombre').value      = x?.nombre||'';
+  document.getElementById('f-inscripcion').value = x?.numInscripcion||'';
+  document.getElementById('f-estado').value      = x?.estado||'Inscrito';
+  document.getElementById('f-fecha-ins').value   = x?.fechaInscripcion||new Date().toISOString().split('T')[0];
+  document.getElementById('f-fecha-ent').value   = x?.fechaEntrevista||'';
   document.getElementById('ov-cand').classList.add('open');
   setTimeout(()=>document.getElementById('f-nombre').focus(),80);
 }
@@ -611,12 +611,15 @@ function saveCand(){
   if(!nombre){alert('El nombre es obligatorio.');return;}
   const c=db.cohorts.find(x=>x.id===activeCohortId);
   if(!c) return;
-  const data={nombre,documento:document.getElementById('f-doc').value.trim(),
-    telefono:document.getElementById('f-tel').value.trim(),
-    email:document.getElementById('f-email').value.trim(),
-    estado:document.getElementById('f-estado').value,
-    fechaInscripcion:document.getElementById('f-fecha').value,
-    notas:document.getElementById('f-notas').value.trim()};
+  const data={
+    documento:       document.getElementById('f-doc').value.trim(),
+    formulario:      document.getElementById('f-formulario').value.trim(),
+    nombre,
+    numInscripcion:  document.getElementById('f-inscripcion').value.trim(),
+    estado:          document.getElementById('f-estado').value,
+    fechaInscripcion:document.getElementById('f-fecha-ins').value,
+    fechaEntrevista: document.getElementById('f-fecha-ent').value,
+  };
   if(editCandId){
     const idx=c.candidates.findIndex(y=>y.id===editCandId);
     if(idx>=0) c.candidates[idx]={...c.candidates[idx],...data};
@@ -637,9 +640,9 @@ function deleteCand(cohortId,candId){
 function exportCSV(cohortId){
   const c=db.cohorts.find(x=>x.id===cohortId);
   if(!c)return;
-  const h=['Nombre','Documento','Correo','Teléfono','Estado','Fecha Inscripción','Notas'];
+  const h=['Identificación','Nombre','N° Formulario','N° Inscripción','Estado','Fecha Inscripción','Fecha Entrevista'];
   const lines=[h.join(','),...c.candidates.map(x=>[
-    x.nombre,x.documento,x.email,x.telefono,x.estado,x.fechaInscripcion,x.notas
+    x.documento,x.nombre,x.formulario,x.numInscripcion,x.estado,x.fechaInscripcion,x.fechaEntrevista
   ].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','))];
   const blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
