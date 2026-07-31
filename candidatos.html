@@ -421,14 +421,53 @@ textarea { resize: vertical; min-height: 68px; }
 </div>
 
 <script>
-const KEY = 'madsi_cohortes_cand_v1';
-let db = JSON.parse(localStorage.getItem(KEY) || '{"cohorts":[]}');
+const KEY = 'madsi_cohortes_cand_v2';
+let db = { cohorts: [] };
 let editCohortId = null;
 let editCandId = null;
 let activeCohortId = null;
 
 function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
+
+function save() {
+  // Guardar en localStorage inmediatamente (respaldo local)
+  try { localStorage.setItem(KEY, JSON.stringify(db)); } catch(e) {}
+  // Guardar en servidor (persistencia compartida)
+  fetch('/api/candidatos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(db)
+  }).catch(e => console.error('Error guardando en servidor:', e));
+}
+
+async function loadData() {
+  // 1. Intentar servidor
+  try {
+    const r = await fetch('/api/candidatos');
+    if (r.ok) {
+      const d = await r.json();
+      if (d && d.cohorts && d.cohorts.length) {
+        localStorage.setItem(KEY, JSON.stringify(d));
+        return d;
+      }
+    }
+  } catch(e) {}
+  // 2. Caer a localStorage si el servidor está vacío
+  for (const k of [KEY, 'madsi_cohortes_cand_v1']) {
+    try {
+      const local = localStorage.getItem(k);
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (parsed && parsed.cohorts && parsed.cohorts.length) {
+          // Subir al servidor para que quede compartido
+          fetch('/api/candidatos', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(parsed) });
+          return parsed;
+        }
+      }
+    } catch(e) {}
+  }
+  return { cohorts: [] };
+}
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmt(iso){ if(!iso)return '—'; const[y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }
 
@@ -659,7 +698,11 @@ document.getElementById('ov-cohort').addEventListener('click',function(e){if(e.t
 document.getElementById('ov-cand').addEventListener('click',function(e){if(e.target===this)closeCandModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeCohortModal();closeCandModal();}});
 
-render();
+async function init() {
+  db = await loadData();
+  render();
+}
+init();
 </script>
 </body>
 </html>
